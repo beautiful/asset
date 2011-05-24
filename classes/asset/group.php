@@ -29,19 +29,41 @@ class Asset_Group {
 	
 	public function load_config($config_path)
 	{
-		$assets = Kohana::config("assets.groups.{$config_path}");
-		$filters = Kohana::config("assets.groups.{$config_path}");
+		$config = Kohana::config('assets');
+		$assets = Arr::get($config['groups'], $config_path);
+		
+		if ( ! $assets)
+		{
+			throw new Kohana_Exception('You have no assets defined for :group',
+				array(':group' => $config_path));
+		}
 		
 		foreach ($assets as $_asset)
 		{
 			$class = "Asset_{$_asset[0]}";
-			$this->_assets[] = new $class($_asset[1]);
+			
+			if (isset($_asset[2]))
+			{
+				$this->_assets[] = new $class($_asset[1], $_asset[2]);
+			}
+			else
+			{
+				$this->_assets[] = new $class($_asset[1]);
+			}
 		}
 		
-		foreach ($filters as $_filter)
+		if (isset($config['filters']))
 		{
-			$class = "Asset_Filter_{$_filter[0]}";
-			$this->add_filter(new $class);
+			$filters = Arr::get($config['filters'], $config_path);
+			
+			if ( ! empty($filters))
+			{
+				foreach ($filters as $_filter)
+				{
+					$class = "Asset_Filter_{$_filter[0]}";
+					$this->add_filter(new $class);
+				}
+			}
 		}
 		
 		return $this;
@@ -67,6 +89,11 @@ class Asset_Group {
 	{
 		$this->filter();
 		return implode("\n", $this->assets());
+	}
+	
+	public function __toString()
+	{
+		return $this->html();
 	}
 
 }
