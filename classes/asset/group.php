@@ -18,7 +18,8 @@ class Asset_Group {
 		}
 		else
 		{
-			throw new Kohana_Exception('Asset Group must be array of Assets or a config path.');
+			throw new InvalidArgumentException(
+				'Asset Group must be array of Assets or a config path.');
 		}
 	}
 	
@@ -34,7 +35,8 @@ class Asset_Group {
 		
 		if ( ! $assets)
 		{
-			throw new Kohana_Exception('You have no assets defined for :group',
+			throw new UnexpectedValueException(
+				'You have no assets defined for :group',
 				array(':group' => $config_path));
 		}
 		
