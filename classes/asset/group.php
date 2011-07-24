@@ -90,7 +90,7 @@ class Asset_Group {
 	public function html()
 	{
 		$this->filter();
-		return implode("\n", $this->assets())."\n";
+		return implode(PHP_EOL, $this->assets()).PHP_EOL;
 	}
 	
 	public function __toString()
