@@ -62,5 +62,32 @@ abstract class Asset_Filter {
 		$filename = basename($location);
 		return substr($filename, 0, strrchr('.', $filename));
 	}
+	
+	protected function _asset_contents(array $assets)
+	{
+		ob_start();
+		
+		foreach ($assets as $_asset)
+		{
+			$location = $locations[] = $_asset->location();
+			
+			if (strpos($location, '://') === FALSE)
+			{
+				$url = URL::base(TRUE).$location;
+			}
+			else
+			{
+				$url = $location;
+			}
+			
+			echo Request::factory($url)
+				->execute()
+				->body();
+			
+			echo PHP_EOL;
+		}
+		
+		return ob_get_clean();
+	}
 
 }

@@ -9,24 +9,13 @@ class Asset_Filter_Concat extends Asset_Filter {
 		
 		foreach ($asset_types as $_type => $_assets)
 		{
-			$locations =
-			$contents = array();
-			
-			foreach ($_assets as $_asset)
-			{
-				$location = $locations[] = $_asset->location();
-				$contents[] = Request::factory($location)
-					->execute()
-					->body();
-			}
-			
-			$md5 = md5(implode('', $locations).time());
+			$locations = array();
+			$contents = $this->_asset_contents($_assets);
+			$md5 = md5($contents.time());
 			$location = "{$_type}/compiled-{$md5}.{$_type}";
-			
-			file_put_contents(DOCROOT.$location, implode("\n", $contents));
+			file_put_contents(DOCROOT.$location, $contents);
 			
 			$class = "Asset_{$_type}";
-			
 			$filtered[] = new $class($location);
 		}
 		
