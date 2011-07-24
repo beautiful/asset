@@ -6,10 +6,18 @@ class Asset_Coffee extends Asset {
 	
 	public function html()
 	{
+		$location = $this->location();
+		
+		if (strpos($location, '://') === FALSE)
+		{
+			// Add the base URL
+			$location = URL::base($protocol, $index).$location;
+		}
+		
 		$attributes = $this->attributes();
 
 		// Set the script link
-		$attributes['src'] = $this->location();
+		$attributes['src'] = $location;
 
 		// Set the script type
 		$attributes['type'] = 'text/coffeescript';

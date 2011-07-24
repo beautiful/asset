@@ -6,10 +6,18 @@ class Asset_LESS extends Asset {
 	
 	public function html()
 	{
+		$location = $this->location();
+		
+		if (strpos($location, '://') === FALSE)
+		{
+			// Add the base URL
+			$location = URL::base($protocol, $index).$location;
+		}
+		
 		$attributes = $this->attributes();
 
 		// Set the stylesheet link
-		$attributes['href'] = $this->location();
+		$attributes['href'] = $location;
 
 		// Set the stylesheet rel
 		$attributes['rel'] = 'stylesheet/less';
