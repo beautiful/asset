@@ -95,7 +95,15 @@ class Asset_Group {
 	
 	public function __toString()
 	{
-		return $this->html();
+		try
+		{
+			return $this->html();
+		}
+		catch (Exception $e)
+		{
+			Kohana_Exception::handler($e);
+			return '';
+		}
 	}
 
 }
