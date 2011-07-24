@@ -60,7 +60,7 @@ abstract class Asset_Filter {
 	protected function _get_filename($location)
 	{
 		$filename = basename($location);
-		return substr($filename, 0, strrchr('.', $filename));
+		return substr($filename, 0, strrpos($filename, '.'));
 	}
 	
 	protected function _asset_contents(array $assets)
