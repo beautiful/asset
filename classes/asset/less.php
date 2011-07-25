@@ -11,7 +11,7 @@ class Asset_LESS extends Asset {
 		if (strpos($location, '://') === FALSE)
 		{
 			// Add the base URL
-			$location = URL::base($protocol, $index).$location;
+			$location = URL::base().$location;
 		}
 		
 		$attributes = $this->attributes();
