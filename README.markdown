@@ -21,8 +21,8 @@ you may describe them directly in PHP like so:
 		new Asset_CSS('css/print.css', array('media' => 'print')),
 		new Asset_Less('css/testing.less'),
 	));
-	$stylesheets->add_filter(new Asset_Filter_Less);
-	$stylesheets->add_filter(new Asset_Filter_Concat);
+	$stylesheets->add_filter('Less');
+	$stylesheets->add_filter('Concat');
 	echo $stylesheets;
 	
 Using the default Kohana config reader you could have described this
