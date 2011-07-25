@@ -62,7 +62,7 @@ class Beautiful_Asset_Group {
 			{
 				foreach ($filters as $_filter)
 				{
-					$class = "Asset_Filter_{$_filter[0]}";
+					$class = "Asset_Filter_{$_filter}";
 					$this->add_filter(new $class);
 				}
 			}
