@@ -14,7 +14,6 @@ class Asset_Filter_Concat extends Asset_Filter {
 			$md5 = md5($contents.time());
 			$location = "{$_type}/compiled-{$md5}.{$_type}";
 			file_put_contents(DOCROOT.$location, $contents);
-			
 			$class = "Asset_{$_type}";
 			$filtered[] = new $class($location);
 		}
