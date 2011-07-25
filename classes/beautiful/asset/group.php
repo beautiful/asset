@@ -93,24 +93,11 @@ class Beautiful_Asset_Group {
 			{
 				foreach ($filters as $_filter)
 				{
-					$class = "Asset_Filter_{$_filter}";
-					$this->add_filter(new $class);
+					$this->_filters[] = $_filter;
 				}
 			}
 		}
 		
-		return $this;
-	}
-	
-	/**
-	 * Add filter to group.
-	 *
-	 * @param   Asset_Filter
-	 * @return  $this
-	 */
-	public function add_filter(Asset_Filter $filter)
-	{
-		$this->_filters[] = $filter;
 		return $this;
 	}
 	
@@ -123,7 +110,8 @@ class Beautiful_Asset_Group {
 	{
 		foreach ($this->_filters as $_filter)
 		{
-			$this->_assets = $_filter->filter($this->assets());
+			$method = "Asset_Filter_{$_filter}::filter";
+			$this->_assets = call_user_func($method, $this->assets());
 		}
 		
 		return $this;
