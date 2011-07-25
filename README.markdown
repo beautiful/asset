@@ -37,7 +37,7 @@ like so:
 			),
 		),
 		'filters' => array(
-			'stylesheets' => array(array('Less'), array('Concat')),
+			'stylesheets' => array('Less', 'Concat'),
 		),
 	);
 	
