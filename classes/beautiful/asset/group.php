@@ -1,11 +1,30 @@
 <?php defined('SYSPATH') or die('No direct script access.');
-
+/**
+ * Beautiful Asset Group
+ *
+ * @package     Beautiful
+ * @subpackage  Beautiful Asset
+ * @category    Asset Group
+ * @author      Luke Morton
+ * @copyright   Luke Morton, 2011
+ * @license     MIT
+ */
 class Beautiful_Asset_Group {
 
+	// List of assets in group
 	protected $_assets = array();
 	
+	// List of filters to apply to group
 	protected $_filters = array();
 
+	/**
+	 * Create new instance of Beautiful_Asset_Group.
+	 *
+	 * @param   mixed  if string used to as config path
+	 *                 if array used as list of Beautiful_Asset
+	 * @return  void
+	 * @throws  InvalidArgumentException
+	 */
 	public function __construct($groups)
 	{
 		if (is_string($groups))
@@ -23,11 +42,23 @@ class Beautiful_Asset_Group {
 		}
 	}
 	
+	/**
+	 * Get assets.
+	 *
+	 * @return  array
+	 */
 	public function assets()
 	{
 		return $this->_assets;
 	}
 	
+	/**
+	 * Load config for a group.
+	 *
+	 * @param   string  config path
+	 * @return  $this
+	 * @throws  UnexpectedValueException
+	 */
 	public function load_config($config_path)
 	{
 		$config = Kohana::config('assets');
@@ -71,12 +102,23 @@ class Beautiful_Asset_Group {
 		return $this;
 	}
 	
+	/**
+	 * Add filter to group.
+	 *
+	 * @param   Asset_Filter
+	 * @return  $this
+	 */
 	public function add_filter(Asset_Filter $filter)
 	{
 		$this->_filters[] = $filter;
 		return $this;
 	}
 	
+	/**
+	 * Apply filters to group.
+	 *
+	 * @return  $this
+	 */
 	public function filter()
 	{
 		foreach ($this->_filters as $_filter)
@@ -87,12 +129,23 @@ class Beautiful_Asset_Group {
 		return $this;
 	}
 	
+	/**
+	 * Get HTML for including all assets in group.
+	 *
+	 * @return  string
+	 */
 	public function html()
 	{
 		$this->filter();
 		return implode(PHP_EOL, $this->assets()).PHP_EOL;
 	}
 	
+	/**
+	 * toString uses Beautiful_Asset_Group::html().
+	 *
+	 * @return  string
+	 * @uses    Kohana_Exception::handler()
+	 */
 	public function __toString()
 	{
 		try

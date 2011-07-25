@@ -1,12 +1,28 @@
 <?php defined('SYSPATH') or die('No direct script access.');
-
+/**
+ * Beautiful Asset Filter
+ *
+ * @package     Beautiful
+ * @subpackage  Beautiful Asset
+ * @category    Asset Filter
+ * @author      Luke Morton
+ * @copyright   Luke Morton, 2011
+ * @license     MIT
+ */
 abstract class Beautiful_Asset_Filter {
 
-	protected $_types = array();
+	// Filters can be fussy about types they affect
+	protected static $_types = array();
 	
-	public function extract_filterable(array $assets)
+	/**
+	 * Get the assets that can be filtered by this filter.
+	 *
+	 * @param   array  of assets to filter
+	 * @return  array  of assets that can be filtered
+	 */
+	public static function extract_filterable(array $assets)
 	{
-		if (empty($this->_types))
+		if (empty(self::$_types))
 		{
 			return $assets;
 		}
@@ -15,7 +31,7 @@ abstract class Beautiful_Asset_Filter {
 		
 		foreach ($assets as $_asset)
 		{
-			if (in_array($_asset->type(), $this->_types))
+			if (in_array($_asset->type(), self::$_types))
 			{
 				$filterable[] = $_asset;
 			}
@@ -24,7 +40,13 @@ abstract class Beautiful_Asset_Filter {
 		return $filterable;
 	}
 	
-	public function split_by_type(array $assets)
+	/**
+	 * Get an array of assets by type.
+	 *
+	 * @param   array  of assets to filter
+	 * @return  array
+	 */
+	public static function split_by_type(array $assets)
 	{
 		$types = array();
 		
@@ -36,15 +58,20 @@ abstract class Beautiful_Asset_Filter {
 		return $types;
 	}
 	
-	public function filter(array $assets)
+	/**
+	 * Filter assets.
+	 *
+	 * @return  array  of filtered assets
+	 */
+	public static function filter(array $assets)
 	{
-		$filterable = $this->extract_filterable($assets);
+		$filterable = self::extract_filterable($assets);
 		$non_filterable = array_diff($assets, $filterable);
 		$final = array();
 		
 		if ( ! empty($filterable))
 		{
-			$final = array_merge($final, $this->_filter($filterable));
+			$final = array_merge($final, self::_filter($filterable));
 		}
 		
 		if ( ! empty($non_filterable))
@@ -55,15 +82,18 @@ abstract class Beautiful_Asset_Filter {
 		return $final;
 	}
 	
-	abstract protected function _filter(array $assets);
+	// Inner workings
+	abstract protected static function _filter(array $assets);
 	
-	protected function _get_filename($location)
+	// Get filename for a location
+	protected static function _get_filename($location)
 	{
 		$filename = basename($location);
 		return substr($filename, 0, strrpos($filename, '.'));
 	}
 	
-	protected function _asset_contents(array $assets)
+	// Get asset contents
+	protected static function _asset_contents(array $assets)
 	{
 		ob_start();
 		
