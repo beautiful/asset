@@ -2,11 +2,11 @@
 
 class Asset_Filter_Less extends Asset_Filter {
 
-	protected $_types = array('coffee');
+	protected $_types = array('less');
 	
 	public function __construct()
 	{
-		require_once '../../../vendor/lessphp/less.inc.php';
+		require_once dirname(__FILE__).'/../../../vendor/lessphp/lessc.inc.php';
 	}
 
 	protected function _filter(array $assets)
@@ -16,21 +16,12 @@ class Asset_Filter_Less extends Asset_Filter {
 		
 		foreach ($assets as $_asset)
 		{
+			$css = $lc->parse($this->_asset_contents(array($_asset)));
 			$location = $_asset->location();
-			
-			$css = $lc->parse(
-				Request::factory($location)
-					->execute()
-					->body()
-			);
-			
 			$css_location = "css/{$this->_get_filename($location)}.css";
-			
 			file_put_contents(DOCROOT.$css_location, $css);
-			
 			$final[] = new Asset_CSS($css_location);
 		}
-		
 		
 		return $final;
 	}
