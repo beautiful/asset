@@ -22,7 +22,7 @@ abstract class Beautiful_Asset_Filter {
 	 */
 	public static function extract_filterable(array $assets)
 	{
-		if (empty(self::$_types))
+		if (empty(static::$_types))
 		{
 			return $assets;
 		}
@@ -31,7 +31,7 @@ abstract class Beautiful_Asset_Filter {
 		
 		foreach ($assets as $_asset)
 		{
-			if (in_array($_asset->type(), self::$_types))
+			if (in_array($_asset->type(), static::$_types))
 			{
 				$filterable[] = $_asset;
 			}
@@ -65,13 +65,13 @@ abstract class Beautiful_Asset_Filter {
 	 */
 	public static function filter(array $assets)
 	{
-		$filterable = self::extract_filterable($assets);
+		$filterable = static::extract_filterable($assets);
 		$non_filterable = array_diff($assets, $filterable);
 		$final = array();
 		
 		if ( ! empty($filterable))
 		{
-			$final = array_merge($final, self::_filter($filterable));
+			$final = array_merge($final, static::_filter($filterable));
 		}
 		
 		if ( ! empty($non_filterable))
