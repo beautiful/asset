@@ -61,7 +61,7 @@ class Beautiful_Asset_Group {
 	 */
 	public function load_config($config_path)
 	{
-		$config = Kohana::config('assets');
+		$config = Kohana::$config->load('assets');
 		$assets = Arr::get($config['groups'], $config_path);
 		
 		if ( ! $assets)
