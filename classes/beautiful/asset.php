@@ -33,6 +33,18 @@ abstract class Beautiful_Asset {
 
 		$this->_settings = $settings;
 	}
+
+	/**
+	 * Get a single or use a default value.
+	 *
+	 * @param   string  key
+	 * @param   mixed   default value
+	 * @return  mixed
+	 */
+	protected function setting($key, $default = NULL)
+	{
+		return Arr::get($this->_settings, $key, $default);
+	}
 	
 	/**
 	 * Get type.
