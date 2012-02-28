@@ -17,8 +17,8 @@ abstract class Beautiful_Asset {
 	// Relative or Absolute HTTP location
 	protected $_location;
 	
-	// Attributes for Asset
-	protected $_attributes = array();
+	// Settings for Asset
+	protected $_settings = array();
 	
 	/**
 	 * Create new instance of Beautiful_Asset.
@@ -27,14 +27,11 @@ abstract class Beautiful_Asset {
 	 * @param   array   list of attributes
 	 * @return  void
 	 */
-	public function __construct($location, array $attributes = NULL)
+	public function __construct($location, array $settings = array())
 	{
 		$this->_location = $location;
-		
-		if (isset($attributes))
-		{
-			$this->_attributes = $attributes;
-		}
+
+		$this->_settings = $settings;
 	}
 	
 	/**
@@ -54,6 +51,11 @@ abstract class Beautiful_Asset {
 	 */
 	public function location()
 	{
+		if ($this->cache_buster())
+		{
+			return $this->_location.'?cache='.time();
+		}
+
 		return $this->_location;
 	}
 	
@@ -64,7 +66,12 @@ abstract class Beautiful_Asset {
 	 */
 	public function attributes()
 	{
-		return $this->_attributes;
+		return Arr::get($this->_settings, 'attributes', array());
+	}
+
+	public function cache_buster()
+	{
+		return Arr::get($this->_settings, 'cache_buster', FALSE);
 	}
 	
 	/**

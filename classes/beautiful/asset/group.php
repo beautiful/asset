@@ -63,6 +63,7 @@ class Beautiful_Asset_Group {
 	{
 		$config = Kohana::$config->load('assets');
 		$assets = Arr::get($config['groups'], $config_path);
+		$global_settings = Arr::get($config, 'global_settings', array());
 		
 		if ( ! $assets)
 		{
@@ -74,15 +75,15 @@ class Beautiful_Asset_Group {
 		foreach ($assets as $_asset)
 		{
 			$class = "Asset_{$_asset[0]}";
+
+			$settings = $global_settings;
 			
 			if (isset($_asset[2]))
 			{
-				$this->_assets[] = new $class($_asset[1], $_asset[2]);
+				$settings = Arr::merge($settings, $_asset[2]);
 			}
-			else
-			{
-				$this->_assets[] = new $class($_asset[1]);
-			}
+			
+			$this->_assets[] = new $class($_asset[1], $settings);
 		}
 		
 		if (isset($config['filters']))
