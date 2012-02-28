@@ -63,12 +63,14 @@ abstract class Beautiful_Asset {
 	 */
 	public function location()
 	{
+		$location = $this->_location;
+
 		if ($this->setting('cache_buster'))
 		{
-			return $this->_location.'?cache='.time();
+			$location .= '?cache='.time();
 		}
 
-		return $this->_location;
+		return $location;
 	}
 	
 	/**
@@ -78,8 +80,7 @@ abstract class Beautiful_Asset {
 	 */
 	public function attributes()
 	{
-		return Arr::get($this->_settings, 'attributes', array());
-
+		return $this->setting('attributes', array());
 	}
 	
 	/**
