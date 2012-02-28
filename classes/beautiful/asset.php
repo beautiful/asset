@@ -63,7 +63,7 @@ abstract class Beautiful_Asset {
 	 */
 	public function location()
 	{
-		if ($this->cache_buster())
+		if ($this->setting('cache_buster'))
 		{
 			return $this->_location.'?cache='.time();
 		}
@@ -79,11 +79,7 @@ abstract class Beautiful_Asset {
 	public function attributes()
 	{
 		return Arr::get($this->_settings, 'attributes', array());
-	}
 
-	public function cache_buster()
-	{
-		return Arr::get($this->_settings, 'cache_buster', FALSE);
 	}
 	
 	/**
