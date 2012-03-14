@@ -83,7 +83,10 @@ abstract class Beautiful_Asset_Filter {
 	}
 	
 	// Inner workings
-	abstract protected static function _filter(array $assets);
+	protected static function _filter(array $assets)
+	{
+		throw new Exception('Not implemented');
+	}
 	
 	// Get filename for a location
 	protected static function _get_filename($location)
