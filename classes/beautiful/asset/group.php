@@ -11,8 +11,11 @@
  */
 class Beautiful_Asset_Group {
 
-	// List of assets in group
-	protected $_assets = array();
+	// Map of config
+	protected $_config;
+
+	// Group name or list of assets
+	protected $_group;
 	
 	// List of filters to apply to group
 	protected $_filters = array();
@@ -25,15 +28,31 @@ class Beautiful_Asset_Group {
 	 * @return  void
 	 * @throws  InvalidArgumentException
 	 */
-	public function __construct($groups)
+	public function __construct($group = NULL, array $additional_config = NULL)
 	{
-		if (is_string($groups))
+		$this->group($group);
+
+		if ($additional_config !== NULL)
 		{
-			$this->load_config($groups);
+			$this->merge_config($additional_config);
 		}
-		else if (is_array($groups))
+	}
+
+	/**
+	 * Set/get group.
+	 *
+	 * @param   string|array
+	 * @return  string|array
+	 */
+	protected function group($group = NULL)
+	{
+		if ($group === NULL)
 		{
-			$this->_assets = $groups;
+			return $this->_group;
+		}
+		else if (is_string($group) OR is_array($group))
+		{
+			$this->_group = $group;
 		}
 		else
 		{
@@ -41,65 +60,106 @@ class Beautiful_Asset_Group {
 				'Asset Group must be array of Assets or a config path.');
 		}
 	}
-	
+
 	/**
-	 * Get assets.
+	 * Merge new configuration.
 	 *
-	 * @return  array
+	 * @param   array
+	 * @return  $this
 	 */
-	public function assets()
+	protected function merge_config(array $additional_config)
 	{
-		return $this->_assets;
+		$config = $this->config();
+
+		if (isset($config['groups'], $additional_config['groups']))
+		{
+			$config['groups'] = array_merge_recursive(
+				$config['groups'],
+				$additional_config['groups']);
+		}
+
+		$this->_config = Arr::merge($config, $additional_config);
 	}
 	
 	/**
 	 * Load config for a group.
 	 *
-	 * @param   string  config path
-	 * @return  $this
-	 * @throws  UnexpectedValueException
+	 * @return  Config
 	 */
-	public function load_config($config_path)
+	protected function load_config()
 	{
-		$config = Kohana::$config->load('assets');
-		$assets = Arr::get($config['groups'], $config_path);
-		$global_settings = Arr::get($config, 'global_settings', array());
-		
-		if ( ! $assets)
+		return Kohana::$config->load('assets')->as_array();
+	}
+
+	/**
+	 * Get entire config or a single key.
+	 *
+	 * @param   string
+	 * @return  mixed
+	 */
+	protected function config($key = NULL)
+	{
+		if ($this->_config === NULL)
 		{
-			throw new UnexpectedValueException(
-				'You have no assets defined for :group',
-				array(':group' => $config_path));
+			$this->_config = $this->load_config();
+		}
+
+		if ($key === NULL)
+		{
+			return $this->_config;
 		}
 		
-		foreach ($assets as $_asset)
+		return Arr::get($this->_config, $key);
+	}
+
+	/**
+	 * Build Asset objects from config.
+	 *
+	 * @param   array  list of lists ($type, $location)
+	 * @param   array  global settings to be shared by assets
+	 * @return  array  list of Asset's
+	 */
+	protected function assets_from_array(array $array)
+	{
+		$assets = array();
+
+		$global_settings = $this->config('global_settings');
+
+		foreach ($array as $_asset)
 		{
 			$class = "Asset_{$_asset[0]}";
 
 			$settings = $global_settings;
-			
+
 			if (isset($_asset[2]))
 			{
 				$settings = Arr::merge($settings, $_asset[2]);
 			}
 			
-			$this->_assets[] = new $class($_asset[1], $settings);
+			$assets[] = new $class($_asset[1], $settings);
 		}
-		
-		if (isset($config['filters']))
+
+		return $assets;
+	}
+
+	/**
+	 * Get assets.
+	 *
+	 * @return  array
+	 */
+	protected function assets()
+	{
+		$group = $this->group();
+
+		if (is_string($group))
 		{
-			$filters = Arr::get($config['filters'], $config_path);
-			
-			if ( ! empty($filters))
-			{
-				foreach ($filters as $_filter)
-				{
-					$this->add_filter($_filter);
-				}
-			}
+			return $this->assets_from_array(
+				Arr::get($this->config('groups'), $group));
 		}
-		
-		return $this;
+		else
+		{
+			return $group;
+		}
 	}
 	
 	/**
@@ -115,19 +175,37 @@ class Beautiful_Asset_Group {
 	}
 	
 	/**
-	 * Apply filters to group.
+	 * Apply filters to list of Assets.
 	 *
-	 * @return  $this
+	 * @param   array
+	 * @return  array
 	 */
-	public function filter()
+	protected function filter(array $assets)
 	{
-		foreach ($this->_filters as $_filter)
+		$filters = $this->_filters;
+
+		if ($config_filters = $this->config('filters'))
+		{
+			$filters = Arr::merge($config_filters, $filters);
+		}
+
+		foreach ($filters as $_filter)
 		{
 			$method = "Asset_Filter_{$_filter}::filter";
-			$this->_assets = call_user_func($method, $this->assets());
+			$assets = call_user_func($method, $assets);
 		}
 		
-		return $this;
+		return $assets;
+	}
+
+	/**
+	 * Render as array.
+	 *
+	 * @return  array
+	 */
+	public function as_array()
+	{
+		return $this->filter($this->assets());
 	}
 	
 	/**
@@ -135,10 +213,9 @@ class Beautiful_Asset_Group {
 	 *
 	 * @return  string
 	 */
-	public function html()
+	public function render()
 	{
-		$this->filter();
-		return implode(PHP_EOL, $this->assets()).PHP_EOL;
+		return implode(PHP_EOL, $this->as_array()).PHP_EOL;
 	}
 	
 	/**
