@@ -88,7 +88,7 @@ abstract class Beautiful_Asset {
 	 *
 	 * @return  array
 	 */
-	public function attributes()
+	protected function attributes()
 	{
 		return $this->setting('attributes', array());
 	}
