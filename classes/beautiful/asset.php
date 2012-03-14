@@ -27,11 +27,21 @@ abstract class Beautiful_Asset {
 	 * @param   array   list of attributes
 	 * @return  void
 	 */
-	public function __construct($location, array $settings = array())
+	public function __construct($location, array $settings = NULL)
 	{
 		$this->_location = $location;
 
-		$this->_settings = $settings;
+		if ($settings !== NULL)
+		{
+			if ($this->_settings)
+			{
+				$this->_settings = Arr::merge($this->_settings, $settings);
+			}
+			else
+			{
+				$this->_settings = $settings;
+			}			
+		}
 	}
 
 	/**
