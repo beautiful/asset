@@ -62,8 +62,7 @@ class Beautiful_Asset_Cache {
 	{
 		if ($this->_cache_name === NULL)
 		{
-			$this->_cache_name = md5(implode('',
-				$this->_asset_locations()));
+			$this->_cache_name = md5(implode('', $this->_asset_locations()));
 		}
 		
 		return $this->_cache_name;
