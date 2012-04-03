@@ -68,8 +68,7 @@ class Beautiful_Asset_Group {
 		if ( ! $assets)
 		{
 			throw new UnexpectedValueException(
-				'You have no assets defined for :group',
-				array(':group' => $config_path));
+				'You have no assets defined for '.$config_path);
 		}
 		
 		foreach ($assets as $_asset)
