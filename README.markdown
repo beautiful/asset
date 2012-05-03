@@ -56,13 +56,13 @@ like so:
 return array(
 	'groups' => array(
 		'stylesheets' => array(
-			array('css', 'css/screen.css'),
-			array('css', 'css/print.css', array(
+			array('CSS', 'css/screen.css'),
+			array('CSS', 'css/print.css', array(
 				'attributes' => array(
 					'media' => 'print',
 				),
 			),
-			array('less', 'css/testing.less'),
+			array('LESS', 'css/testing.less'),
 		),
 	),
 );
