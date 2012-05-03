@@ -213,7 +213,7 @@ class Beautiful_Asset_Group {
 	 *
 	 * @return  string
 	 */
-	public function render()
+	public function html()
 	{
 		return implode(PHP_EOL, $this->as_array()).PHP_EOL;
 	}
