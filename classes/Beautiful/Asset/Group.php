@@ -153,49 +153,22 @@ class Beautiful_Asset_Group {
 
 		if (is_string($group))
 		{
-			return $this->assets_from_array(
-				Arr::get($this->config('groups'), $group));
+			$group_name = $group;
+			$group = Arr::get($this->config('groups'), $group_name);
+
+			if ($group === NULL)
+			{
+				throw new Kohana_Exception(
+					'Group :group not found in configuration.',
+					array(':group' => $group_name));
+			}
+
+			return $this->assets_from_array($group);
 		}
 		else
 		{
 			return $group;
 		}
-	}
-	
-	/**
-	 * Add filter to group.
-	 *
-	 * @param   string
-	 * @return  $this
-	 */
-	public function add_filter($filter)
-	{
-		$this->_filters[] = $filter;
-		return $this;
-	}
-	
-	/**
-	 * Apply filters to list of Assets.
-	 *
-	 * @param   array
-	 * @return  array
-	 */
-	protected function filter(array $assets)
-	{
-		$filters = $this->_filters;
-
-		if ($config_filters = $this->config('filters'))
-		{
-			$filters = Arr::merge($config_filters, $filters);
-		}
-
-		foreach ($filters as $_filter)
-		{
-			$method = "Asset_Filter_{$_filter}::filter";
-			$assets = call_user_func($method, $assets);
-		}
-		
-		return $assets;
 	}
 
 	/**
@@ -205,7 +178,7 @@ class Beautiful_Asset_Group {
 	 */
 	public function as_array()
 	{
-		return $this->filter($this->assets());
+		return $this->assets();
 	}
 	
 	/**
