@@ -75,9 +75,14 @@ abstract class Beautiful_Asset {
 	{
 		$location = $this->_location;
 
-		if ($this->setting('cache_buster'))
+		if ($cache_buster = $this->setting('cache_buster'))
 		{
-			$location .= '?cache='.time();
+			if ($cache_buster === TRUE)
+			{
+				$cache_buster = time();
+			}
+			
+			$location .= '?cache='.$cache_buster;
 		}
 
 		return $location;
